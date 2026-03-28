@@ -1,0 +1,240 @@
+.researchkit-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-light-primary, #fff);
+  border-left: 1px solid var(--border-divider, #e0e0e0);
+  font-family: inherit;
+}
+
+.researchkit-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-divider, #e0e0e0);
+}
+
+.researchkit-panel-header h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.researchkit-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--bg-accent-01, #e8f0fe);
+  color: var(--content-accent-01, #1a73e8);
+  font-weight: 500;
+}
+
+/* Message list */
+.researchkit-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.researchkit-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.researchkit-welcome {
+  text-align: center;
+  padding: 24px;
+  color: var(--content-secondary, #666);
+}
+
+.researchkit-welcome h3 {
+  margin: 0 0 12px;
+  font-size: 16px;
+  color: var(--content-primary, #333);
+}
+
+.researchkit-welcome ul {
+  text-align: left;
+  padding-left: 20px;
+  margin: 8px 0;
+}
+
+.researchkit-welcome li {
+  margin: 4px 0;
+  font-size: 13px;
+}
+
+/* Messages */
+.researchkit-message {
+  margin-bottom: 16px;
+}
+
+.researchkit-message-header {
+  margin-bottom: 4px;
+}
+
+.researchkit-message-role {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--content-secondary, #666);
+}
+
+.researchkit-message-user .researchkit-message-content {
+  background: var(--bg-light-secondary, #f5f5f5);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.researchkit-message-assistant .researchkit-message-content {
+  padding: 4px 0;
+}
+
+.researchkit-message-content p {
+  margin: 4px 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Agent response */
+.researchkit-response {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.researchkit-response h4,
+.researchkit-response h5 {
+  margin: 12px 0 4px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.researchkit-response ul {
+  padding-left: 20px;
+  margin: 4px 0;
+}
+
+.researchkit-response li {
+  margin: 2px 0;
+}
+
+.researchkit-code-block,
+.researchkit-latex-block {
+  background: var(--bg-light-secondary, #f5f5f5);
+  border: 1px solid var(--border-divider, #e0e0e0);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin: 8px 0;
+  overflow-x: auto;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.researchkit-latex-block {
+  border-left: 3px solid var(--content-accent-01, #1a73e8);
+}
+
+/* Thinking animation */
+.researchkit-thinking {
+  display: flex;
+  gap: 4px;
+  padding: 8px 0;
+}
+
+.researchkit-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--content-secondary, #999);
+  animation: researchkit-pulse 1.4s infinite ease-in-out;
+}
+
+.researchkit-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.researchkit-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes researchkit-pulse {
+  0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+  40% { opacity: 1; transform: scale(1); }
+}
+
+.researchkit-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 14px;
+  background: var(--content-primary, #333);
+  animation: researchkit-blink 1s step-end infinite;
+  vertical-align: text-bottom;
+  margin-left: 1px;
+}
+
+@keyframes researchkit-blink {
+  50% { opacity: 0; }
+}
+
+/* Input area */
+.researchkit-input {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid var(--border-divider, #e0e0e0);
+}
+
+.researchkit-input-textarea {
+  flex: 1;
+  resize: none;
+  border: 1px solid var(--border-divider, #ccc);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-family: inherit;
+  line-height: 1.4;
+  min-height: 36px;
+  max-height: 150px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.researchkit-input-textarea:focus {
+  border-color: var(--content-accent-01, #1a73e8);
+}
+
+.researchkit-input-btn {
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s, opacity 0.2s;
+}
+
+.researchkit-send-btn {
+  background: var(--content-accent-01, #1a73e8);
+  color: #fff;
+}
+
+.researchkit-send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.researchkit-send-btn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.researchkit-stop-btn {
+  background: var(--bg-danger, #d93025);
+  color: #fff;
+}
+
+.researchkit-stop-btn:hover {
+  opacity: 0.9;
+}

@@ -128,6 +128,18 @@ services:
     volumes:
       - ~/redis_data:/data
 
+  researchkit:
+    restart: always
+    build:
+      context: ./services/researchkit
+      dockerfile: Dockerfile
+    container_name: researchkit
+    ports:
+      - 3020:3020
+    env_file:
+      - .env
+      
+
   # ldap:
   #    restart: always
   #    image: rroemhild/test-openldap
