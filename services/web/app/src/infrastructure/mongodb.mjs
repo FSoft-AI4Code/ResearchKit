@@ -85,6 +85,9 @@ export const db = {
   users: internalDb.collection('users'),
   onboardingDataCollection: internalDb.collection('onboardingDataCollection'),
   scriptLogs: internalDb.collection('scriptLogs'),
+  researchkitMemory: internalDb.collection('researchkitMemory'),
+  researchkitConversations: internalDb.collection('researchkitConversations'),
+  researchkitConfig: internalDb.collection('researchkitConfig'),
 }
 
 export const connectionPromise = mongoClient.connect()

@@ -1,9 +1,11 @@
 services:
   sharelatex:
     restart: always
-    # Server Pro users:
-    # image: quay.io/sharelatex/sharelatex-pro
-    image: sharelatex/sharelatex
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: researchkit/overleaf
     container_name: sharelatex
     depends_on:
       mongo:
@@ -22,6 +24,7 @@ services:
       # - /var/run/docker.sock:/var/run/docker.sock
     environment:
       OVERLEAF_APP_NAME: Overleaf Community Edition
+      RESEARCHKIT_URL: http://researchkit:3020
 
       OVERLEAF_MONGO_URL: mongodb://mongo/sharelatex
 
@@ -76,14 +79,11 @@ services:
       ## so the following environment variables must be commented out to avoid compile issues.
       ##
       ## Sandboxed Compiles: https://docs.overleaf.com/on-premises/configuration/overleaf-toolkit/server-pro-only-configuration/sandboxed-compiles
-      SANDBOXED_COMPILES: "true"
-      ### Bind-mount source for /var/lib/overleaf/data/compiles inside the container.
-      SANDBOXED_COMPILES_HOST_DIR_COMPILES: "/home/user/sharelatex_data/data/compiles"
-      ### Bind-mount source for /var/lib/overleaf/data/output inside the container.
-      SANDBOXED_COMPILES_HOST_DIR_OUTPUT: "/home/user/sharelatex_data/data/output"
-      ### Backwards compatibility (before Server Pro 5.5)
-      DOCKER_RUNNER: "true"
-      SANDBOXED_COMPILES_SIBLING_CONTAINERS: "true"
+      # SANDBOXED_COMPILES: "true"
+      # SANDBOXED_COMPILES_HOST_DIR_COMPILES: "/home/user/sharelatex_data/data/compiles"
+      # SANDBOXED_COMPILES_HOST_DIR_OUTPUT: "/home/user/sharelatex_data/data/output"
+      # DOCKER_RUNNER: "true"
+      # SANDBOXED_COMPILES_SIBLING_CONTAINERS: "true"
 
       ## Works with test LDAP server shown at bottom of docker compose
       # OVERLEAF_LDAP_URL: 'ldap://ldap:389'
@@ -101,9 +101,26 @@ services:
 
       # OVERLEAF_PROXY_LEARN: "true"
 
+  researchkit:
+    restart: always
+    build: services/researchkit
+    container_name: researchkit
+    depends_on:
+      mongo:
+        condition: service_healthy
+    ports:
+      - "${RESEARCHKIT_PORT:-3020}:3020"
+    environment:
+      MONGODB_URL: mongodb://mongo/sharelatex
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      RESEARCHKIT_MODEL: ${RESEARCHKIT_MODEL:-gpt-4o}
+      RESEARCHKIT_PROVIDER_TYPE: ${RESEARCHKIT_PROVIDER_TYPE:-openai}
+
   mongo:
     restart: always
-    image: mongo:6.0
+    image: mongo:8.0
     container_name: mongo
     command: "--replSet overleaf"
     volumes:

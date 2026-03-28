@@ -139,6 +139,22 @@ services:
     volumes:
       - redis-data:/data
 
+  researchkit:
+    build:
+      context: ..
+      dockerfile: services/researchkit/Dockerfile
+    env_file:
+      - dev.env
+    environment:
+      - MONGODB_URL=mongodb://mongo/sharelatex?directConnection=true
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+    ports:
+      - "127.0.0.1:3020:3020"
+    depends_on:
+      - mongo
+
   web:
     build:
       context: ..
@@ -152,6 +168,7 @@ services:
       - EMAIL_CONFIRMATION_DISABLED=true
       - NODE_ENV=development
       - OVERLEAF_ALLOW_PUBLIC_ACCESS=true
+      - RESEARCHKIT_URL=http://researchkit:3020
     command: ["node", "app.mjs"]
     volumes:
       - sharelatex-data:/var/lib/overleaf
@@ -169,6 +186,7 @@ services:
       - notifications
       - project-history
       - real-time
+      - researchkit
 
   webpack:
     build:

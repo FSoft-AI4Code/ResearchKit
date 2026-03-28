@@ -1,80 +1,175 @@
-<h1 align="center">
-  <br>
-  <a href="https://www.overleaf.com"><img src="doc/logo.png" alt="Overleaf" width="300"></a>
-</h1>
+# ResearchKit
 
-<h4 align="center">An open-source online real-time collaborative LaTeX editor.</h4>
+**Cursor for researchers. Open-source. Agent-powered. Built on Overleaf.**
 
-<p align="center">
-  <a href="https://github.com/overleaf/overleaf/wiki">Wiki</a> •
-  <a href="https://www.overleaf.com/for/enterprises">Server Pro</a> •
-  <a href="#contributing">Contributing</a> •
-  <a href="https://mailchi.mp/overleaf.com/community-edition-and-server-pro">Mailing List</a> •
-  <a href="#authors">Authors</a> •
-  <a href="#license">License</a>
-</p>
+ResearchKit is an AI agent layer built on top of [Overleaf Community Edition](https://github.com/overleaf/overleaf). It gives researchers the same kind of AI-augmented workflow that software engineers get with Cursor — inline editing, paper-aware context, and specialized agents — while keeping the Overleaf IDE they already know.
 
-<img src="doc/screenshot.png" alt="A screenshot of a project being edited in Overleaf Community Edition">
-<p align="center">
-  Figure 1: A screenshot of a project being edited in Overleaf Community Edition.
-</p>
+## Quick Start (Production)
 
-## Community Edition
+### Prerequisites
 
-[Overleaf](https://www.overleaf.com) is an open-source online real-time collaborative LaTeX editor. We run a hosted version at [www.overleaf.com](https://www.overleaf.com), but you can also run your own local version, and contribute to the development of Overleaf.
+- Docker and Docker Compose
+- An LLM API key (OpenAI, Anthropic, or any OpenAI-compatible endpoint)
 
-> [!CAUTION]
-> Overleaf Community Edition is intended for use in environments where **all** users are trusted. Community Edition is **not** appropriate for scenarios where isolation of users is required due to Sandbox Compiles not being available. When not using Sandboxed Compiles, users have full read and write access to the `sharelatex` container resources (filesystem, network, environment variables) when running LaTeX compiles.
+### 1. Configure environment
 
-For more information on Sandbox Compiles check out our [documentation](https://docs.overleaf.com/on-premises/configuration/overleaf-toolkit/server-pro-only-configuration/sandboxed-compiles).
+```bash
+cp .env.example .env
+```
 
-## Enterprise
+Edit `.env`:
+```bash
+RESEARCHKIT_PORT=3020
 
-If you want help installing and maintaining Overleaf in your lab or workplace, we offer an officially supported version called [Overleaf Server Pro](https://www.overleaf.com/for/enterprises). It also includes more features for security (SSO with LDAP or SAML), administration and collaboration (e.g. tracked changes). [Find out more!](https://www.overleaf.com/for/enterprises)
+# Option A: OpenAI
+OPENAI_API_KEY=sk-...
 
-## Keeping up to date
+# Option B: OpenAI-compatible proxy (LiteLLM, vLLM, Ollama, etc.)
+OPENAI_API_KEY=sk-...
+OPENAI_BASE_URL=http://your-proxy:4000
 
-Sign up to the [mailing list](https://mailchi.mp/overleaf.com/community-edition-and-server-pro) to get updates on Overleaf releases and development.
+# Option C: Anthropic
+ANTHROPIC_API_KEY=sk-ant-...
+```
 
-## Installation
+### 2. Build and start all services
 
-We have detailed installation instructions in the [Overleaf Toolkit](https://github.com/overleaf/toolkit/).
+```bash
+docker compose up -d --build
+```
 
-## Upgrading
+The first build takes a few minutes — it extends the official Overleaf image with the ResearchKit module and rebuilds the frontend bundle.
 
-If you are upgrading from a previous version of Overleaf, please see the [Release Notes section on the Wiki](https://github.com/overleaf/overleaf/wiki#release-notes) for all of the versions between your current version and the version you are upgrading to.
+This starts:
 
-## Overleaf Docker Image
+| Service | Port | Description |
+|---------|------|-------------|
+| sharelatex | 80 | Overleaf editor |
+| researchkit | 3020 | AI agent service (Python/FastAPI) |
+| mongo | 27017 | MongoDB |
+| redis | 6379 | Redis |
 
-This repo contains two dockerfiles, [`Dockerfile-base`](server-ce/Dockerfile-base), which builds the
-`sharelatex/sharelatex-base` image, and [`Dockerfile`](server-ce/Dockerfile) which builds the
-`sharelatex/sharelatex` (or "community") image.
+### 3. Create admin account
 
-The Base image generally contains the basic dependencies like `wget`, plus `texlive`.
-We split this out because it's a pretty heavy set of
-dependencies, and it's nice to not have to rebuild all of that every time.
+```bash
+docker exec sharelatex /bin/bash -c "cd /overleaf/services/web && node modules/server-ce-scripts/scripts/create-user --admin --email=admin@example.com"
+```
 
-The `sharelatex/sharelatex` image extends the base image and adds the actual Overleaf code
-and services.
+### 4. Use ResearchKit
 
-Use `make build-base` and `make build-community` from `server-ce/` to build these images.
+1. Open http://localhost in your browser
+2. Log in and open a LaTeX project
+3. Click the **ResearchKit** icon (robot) in the sidebar rail
+4. Start chatting: "Paraphrase this paragraph", "Draft an introduction", etc.
 
-We use the [Phusion base-image](https://github.com/phusion/baseimage-docker)
-(which is extended by our `base` image) to provide us with a VM-like container
-in which to run the Overleaf services. Baseimage uses the `runit` service
-manager to manage services, and we add our init-scripts from the `server-ce/runit`
-folder.
+## Development Setup
 
-## Contributing
+### Option A: Full stack with Docker
 
-Please see the [CONTRIBUTING](CONTRIBUTING.md) file for information on contributing to the development of Overleaf.
+```bash
+docker compose up --build
+```
 
-## Authors
+### Option B: Python service only (with hot reload)
 
-[The Overleaf Team](https://www.overleaf.com/about)
+Best for developing the agent/memory/provider code.
+
+```bash
+# Terminal 1: Start Overleaf + databases
+docker compose up sharelatex mongo redis
+
+# Terminal 2: Run ResearchKit with hot reload
+cd services/researchkit
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"
+
+export MONGODB_URL="mongodb://localhost:27017/sharelatex"
+export OPENAI_API_KEY="sk-..."
+uvicorn researchkit.main:app --reload --host 0.0.0.0 --port 3020
+```
+
+### Option C: Frontend only
+
+For working on the Overleaf sidebar UI:
+
+```bash
+# From repo root — follow standard Overleaf dev setup
+cd develop && bin/build && bin/dev
+```
+
+The ResearchKit module lives at `services/web/modules/researchkit/`. Restart webpack after changing `settings.defaults.js`.
+
+## Architecture
+
+```
+┌─────────────────────────────────────────┐
+│  Overleaf (port 80)                     │
+│  ├── React sidebar panel (thin UI)      │
+│  └── Express proxy → injects project    │
+│       files and forwards to Python      │
+└──────────────┬──────────────────────────┘
+               │
+┌──────────────▼──────────────────────────┐
+│  ResearchKit Service (port 3020)        │
+│  ├── Main Agent (inline editing)        │
+│  ├── Memory (paper context)             │
+│  ├── LLM Providers (OpenAI/Claude/...)  │
+│  ├── Research Agent (stub)              │
+│  ├── Figure Agent (stub)                │
+│  └── Review Agent (stub)                │
+└──────────────┬──────────────────────────┘
+               │
+          MongoDB (shared)
+```
+
+### Key directories
+
+```
+services/
+├── researchkit/              # Python AI service (FastAPI)
+│   └── researchkit/
+│       ├── agents/           # Main Agent + sub-agent stubs
+│       ├── memory/           # Paper context (LaTeX parser, Memory)
+│       ├── providers/        # LLM abstraction (OpenAI, Claude, custom)
+│       ├── api/              # REST endpoints
+│       └── config/           # Configuration management
+└── web/
+    └── modules/researchkit/  # Overleaf frontend module
+        ├── app/src/          # Express proxy routes
+        └── frontend/         # React sidebar components
+```
+
+## What Works Now (MVP)
+
+- Sidebar chat panel in the Overleaf editor
+- Streaming responses via SSE
+- Main Agent with inline editing (paraphrase, grammar, section drafting, BibTeX)
+- Paper Memory system (auto-indexes LaTeX project structure, citations, abstract)
+- Multi-provider LLM support (OpenAI, Anthropic, any OpenAI-compatible endpoint)
+- Per-project configuration
+
+## What's Coming (Sub-Agents)
+
+- **Research Agent** — literature search, full-paper reading, citation graph traversal, related work generation
+- **Figure Agent** — data-to-plots via Python execution, TikZ generation, diagram creation
+- **Review Agent** — simulated peer review, claim strength analysis, venue checklist validation
+
+See [ResearchKit-PRD.md](ResearchKit-PRD.md) for the full product specification.
+
+## Testing
+
+```bash
+cd services/researchkit
+pip install -e ".[dev]"
+pytest
+ruff check researchkit/
+```
+
+## Based on Overleaf
+
+This project is built on top of [Overleaf Community Edition](https://github.com/overleaf/overleaf). See the original [CONTRIBUTING.md](CONTRIBUTING.md) for Overleaf contribution guidelines.
 
 ## License
 
 The code in this repository is released under the GNU AFFERO GENERAL PUBLIC LICENSE, version 3. A copy can be found in the [`LICENSE`](LICENSE) file.
-
-Copyright (c) Overleaf, 2014-2025.

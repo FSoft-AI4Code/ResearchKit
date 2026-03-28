@@ -1058,7 +1058,12 @@ module.exports = {
     referenceSearchSetting: [],
     errorLogsComponents: [],
     referenceIndices: [],
-    railEntries: [],
+    railEntries: [
+      Path.resolve(
+        __dirname,
+        '../modules/researchkit/frontend/js/components/researchkit-rail-entry.tsx'
+      ),
+    ],
     railPopovers: [],
   },
 
@@ -1067,6 +1072,7 @@ module.exports = {
     'launchpad',
     'server-ce-scripts',
     'user-activate',
+    'researchkit',
   ],
   viewIncludes: {},
 
