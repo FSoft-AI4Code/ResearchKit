@@ -8,6 +8,9 @@ class ChatRequest(BaseModel):
     file_path: str | None = None
     selection_from: int | None = None
     selection_to: int | None = None
+    cursor_line: int | None = None
+    line_from: int | None = None
+    line_to: int | None = None
     files: dict[str, str] | None = None
     config: dict | None = None
 
@@ -48,6 +51,11 @@ class ConfigRequest(BaseModel):
     api_key: str | None = None
     base_url: str | None = None
     model: str = "gpt-4o"
+    workspace_path: str | None = None
+    runner_url: str | None = None
+    bash_default_timeout_seconds: int = 60
+    max_tool_iterations: int = 8
+    tool_output_max_chars: int = 12000
 
 
 class HealthResponse(BaseModel):

@@ -2,88 +2,40 @@ AGENT_TOOLS = [
     {
         "type": "function",
         "function": {
-            "name": "paraphrase_text",
+            "name": "bash",
             "description": (
-                "Rewrite the selected LaTeX text to improve clarity and readability "
-                "while preserving technical meaning, citations, and mathematical notation. "
-                "Return the rewritten text in LaTeX format."
+                "Execute a shell command in the project workspace. Use this for reading files, "
+                "searching, refactoring, formatting, and other codebase-style operations "
+                "on paper files. "
+                "Prefer short deterministic commands and avoid interactive shells."
             ),
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "rewritten_text": {
+                    "command": {
                         "type": "string",
-                        "description": "The paraphrased text in LaTeX format",
+                        "description": "Shell command to execute",
+                    },
+                    "timeout_seconds": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 300,
+                        "description": "Optional command timeout in seconds",
+                    },
+                    "working_subdir": {
+                        "type": "string",
+                        "description": (
+                            "Optional subdirectory inside workspace to run command in"
+                        ),
+                    },
+                    "expect_file_changes": {
+                        "type": "boolean",
+                        "description": (
+                            "Set true for edit/refactor commands that should modify files"
+                        ),
                     },
                 },
-                "required": ["rewritten_text"],
-            },
-        },
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "fix_grammar",
-            "description": (
-                "Correct grammar and style issues in the selected LaTeX text. "
-                "Focus on academic writing conventions: fix hedging, passive voice overuse, "
-                "vague claims, and grammatical errors. Return the corrected text."
-            ),
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "corrected_text": {
-                        "type": "string",
-                        "description": "The grammar-corrected text in LaTeX format",
-                    },
-                    "changes_made": {
-                        "type": "array",
-                        "items": {"type": "string"},
-                        "description": "Brief list of changes made",
-                    },
-                },
-                "required": ["corrected_text"],
-            },
-        },
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "draft_section",
-            "description": (
-                "Draft a LaTeX section based on the given outline, topic, or instructions. "
-                "Use the paper's memory context (structure, style, venue constraints) "
-                "to ensure consistency."
-            ),
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "section_content": {
-                        "type": "string",
-                        "description": "The drafted section content in LaTeX format",
-                    },
-                },
-                "required": ["section_content"],
-            },
-        },
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "format_bibtex",
-            "description": (
-                "Normalize and format BibTeX entries. Fix formatting, resolve duplicate keys, "
-                "standardize field ordering."
-            ),
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "formatted_bibtex": {
-                        "type": "string",
-                        "description": "The normalized BibTeX entries",
-                    },
-                },
-                "required": ["formatted_bibtex"],
+                "required": ["command"],
             },
         },
     },

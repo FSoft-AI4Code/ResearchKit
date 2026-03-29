@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo } from 'react'
+import { FC, useCallback, useEffect, useMemo, useRef } from 'react'
 import { createRoot } from 'react-dom/client'
 import type { Root } from 'react-dom/client'
 import { Compartment, StateEffect, StateField } from '@codemirror/state'
@@ -25,6 +25,8 @@ type SetInlineDiffsPayload = {
   onAccept: (messageId: string, patchIndex: number) => void
   onReject: (messageId: string, patchIndex: number) => void
 }
+
+const noopPatchHandler = (_messageId: string, _patchIndex: number) => {}
 
 const setInlineDiffsEffect = StateEffect.define<SetInlineDiffsPayload>()
 
@@ -53,8 +55,10 @@ class ResearchKitInlineDiffWidget extends WidgetType {
         patch={this.entry.patch}
         messageId={this.entry.messageId}
         patchIndex={this.entry.patchIndex}
+        onOpen={noopPatchHandler}
         onAccept={this.onAccept}
         onReject={this.onReject}
+        alwaysExpanded
       />
     )
   }
@@ -134,23 +138,33 @@ function buildInlineDiffDecorations(
   docLength: number
 ) {
   const decorations = patches
-    .map(entry => ({
-      entry,
-      pos: Math.max(0, Math.min(entry.patch.selection_to, docLength)),
-    }))
+    .map(entry => {
+      const from = Math.max(0, Math.min(entry.patch.selection_from, docLength))
+      const to = Math.max(from, Math.min(entry.patch.selection_to, docLength))
+      return { entry, from, to }
+    })
     .sort(
       (a, b) =>
-        a.pos - b.pos ||
+        a.from - b.from ||
         a.entry.messageId.localeCompare(b.entry.messageId) ||
         a.entry.patchIndex - b.entry.patchIndex
     )
-    .map(({ entry, pos }) =>
-      Decoration.widget({
-        widget: new ResearchKitInlineDiffWidget(entry, onAccept, onReject),
+    .map(({ entry, from, to }) => {
+      const widget = new ResearchKitInlineDiffWidget(entry, onAccept, onReject)
+      if (from < to) {
+        // Replace the original text region with the diff widget (git-diff style)
+        return Decoration.replace({
+          widget,
+          block: true,
+        }).range(from, to)
+      }
+      // Pure insertion — place widget at the insert point
+      return Decoration.widget({
+        widget,
         block: true,
         side: 1,
-      }).range(pos)
-    )
+      }).range(from)
+    })
 
   return Decoration.set(decorations, true)
 }
@@ -198,6 +212,7 @@ export const ResearchKitEditorDiffOverlay: FC = () => {
   const { messages, applyPatch, rejectPatch } = useResearchKitContext()
   const { openDocName } = useEditorOpenDocContext()
   const { view } = useEditorViewContext()
+  const latestViewRef = useRef<EditorView | null>(null)
 
   const pendingPatches = useMemo(
     () => collectPendingPatches(messages, openDocName),
@@ -205,6 +220,10 @@ export const ResearchKitEditorDiffOverlay: FC = () => {
   )
 
   useEffect(() => {
+    latestViewRef.current = view
+  }, [view])
+
+  const applyInlineDiffs = useCallback(() => {
     if (!view) return
 
     ensureInlineDiffExtension(view)
@@ -218,20 +237,53 @@ export const ResearchKitEditorDiffOverlay: FC = () => {
   }, [view, pendingPatches, applyPatch, rejectPatch])
 
   useEffect(() => {
+    applyInlineDiffs()
+  }, [applyInlineDiffs])
+
+  useEffect(() => {
     if (!view) return
 
+    // The open-doc context can update before the editor document transaction
+    // completes. Re-apply diffs after doc-open lifecycle events to avoid
+    // losing inline widgets when navigating between files.
+    const reapplyAfterDocOpen = () => {
+      window.requestAnimationFrame(() => {
+        applyInlineDiffs()
+      })
+    }
+
+    window.addEventListener('doc:after-opened', reapplyAfterDocOpen)
+    window.addEventListener(
+      'editor:scroll-position-restored',
+      reapplyAfterDocOpen
+    )
     return () => {
-      if (view.state.field(inlineDiffsField, false)) {
-        view.dispatch({
+      window.removeEventListener('doc:after-opened', reapplyAfterDocOpen)
+      window.removeEventListener(
+        'editor:scroll-position-restored',
+        reapplyAfterDocOpen
+      )
+    }
+  }, [view, applyInlineDiffs])
+
+  useEffect(() => {
+    // Cleanup only on unmount. Clearing on dependency changes can remove diffs
+    // during normal file navigation.
+    return () => {
+      const currentView = latestViewRef.current
+      if (!currentView) return
+
+      if (currentView.state.field(inlineDiffsField, false)) {
+        currentView.dispatch({
           effects: setInlineDiffsEffect.of({
             patches: [],
-            onAccept: applyPatch,
-            onReject: rejectPatch,
+            onAccept: noopPatchHandler,
+            onReject: noopPatchHandler,
           }),
         })
       }
     }
-  }, [view, applyPatch, rejectPatch])
+  }, [])
 
   return null
 }

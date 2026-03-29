@@ -4,14 +4,20 @@ type Props = {
   onSend: (message: string) => void
   isStreaming: boolean
   selectedText?: string
-  autoDetected?: boolean
+  cursorLine?: number | null
+  lineFrom?: number | null
+  lineTo?: number | null
+  filePath?: string | null
 }
 
 export const ResearchKitMessageInput: FC<Props> = ({
   onSend,
   isStreaming,
   selectedText,
-  autoDetected,
+  cursorLine,
+  lineFrom,
+  lineTo,
+  filePath,
 }) => {
   const [input, setInput] = useState('')
 
@@ -40,18 +46,32 @@ export const ResearchKitMessageInput: FC<Props> = ({
     [input, isStreaming, onSend]
   )
 
-  const label = autoDetected ? 'Paragraph:' : 'Selected:'
+  const fileName = filePath ? filePath.split('/').pop() : null
+  const hasContext = Boolean(selectedText || cursorLine)
+
+  const contextLabel = selectedText
+    ? lineFrom != null && lineTo != null
+      ? lineFrom === lineTo
+        ? `Line ${lineFrom}`
+        : `Lines ${lineFrom}\u2013${lineTo}`
+      : 'Selected'
+    : cursorLine
+      ? `Line ${cursorLine}`
+      : null
 
   return (
     <form className="rk-input-form" onSubmit={handleSubmit}>
-      {selectedText && (
-        <div className="rk-selected-text-preview">
-          <span className="rk-selected-label">{label}</span>
-          <span className="rk-selected-content">
-            {selectedText.length > 100
-              ? selectedText.slice(0, 100) + '...'
-              : selectedText}
-          </span>
+      {hasContext && (
+        <div className="rk-context-pill">
+          <span className="rk-context-pill-label">{contextLabel}</span>
+          {fileName && <span className="rk-context-pill-file">{fileName}</span>}
+          {selectedText && (
+            <span className="rk-context-pill-preview">
+              {selectedText.length > 60
+                ? selectedText.slice(0, 60) + '...'
+                : selectedText}
+            </span>
+          )}
         </div>
       )}
       <div className="rk-input-wrapper">
@@ -62,12 +82,12 @@ export const ResearchKitMessageInput: FC<Props> = ({
           onKeyDown={handleKeyDown}
           placeholder={
             selectedText
-              ? autoDetected
-                ? 'What should I do with this paragraph?'
-                : 'What should I do with the selected text?'
-              : 'Ask ResearchKit...'
+              ? 'What should I do with the selected text?'
+              : cursorLine
+                ? 'Ask about this line...'
+                : 'Ask ResearchKit...'
           }
-          rows={1}
+          rows={4}
           disabled={isStreaming}
         />
         <button

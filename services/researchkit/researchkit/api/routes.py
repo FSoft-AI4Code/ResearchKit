@@ -1,12 +1,9 @@
 import json
 import logging
 import traceback
-import sys
 
 from fastapi import APIRouter, HTTPException
 from sse_starlette.sse import EventSourceResponse
-
-logger = logging.getLogger(__name__)
 
 from researchkit.agents.main_agent import MainAgent
 from researchkit.api.models import (
@@ -18,6 +15,8 @@ from researchkit.api.models import (
 )
 from researchkit.config.loader import ConfigLoader
 from researchkit.memory.memory import MemoryManager
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api")
 
@@ -51,10 +50,18 @@ async def chat(request: ChatRequest):
                 file_path=request.file_path,
                 selection_from=request.selection_from,
                 selection_to=request.selection_to,
+                cursor_line=request.cursor_line,
+                line_from=request.line_from,
+                line_to=request.line_to,
+                files=request.files,
             ):
                 event_type = event.get("type", "text")
                 if event_type == "patch":
                     yield {"event": "patch", "data": json.dumps(event["data"])}
+                elif event_type == "action":
+                    yield {"event": "action", "data": json.dumps(event["data"])}
+                elif event_type == "response":
+                    yield {"event": "response", "data": json.dumps(event["data"])}
                 else:
                     yield {"event": "message", "data": event["data"]}
         except Exception:
@@ -98,6 +105,11 @@ async def get_config(project_id: str):
         "provider_type": config.provider_type,
         "base_url": config.base_url,
         "model": config.model,
+        "workspace_path": config.workspace_path,
+        "runner_url": config.runner_url,
+        "bash_default_timeout_seconds": config.bash_default_timeout_seconds,
+        "max_tool_iterations": config.max_tool_iterations,
+        "tool_output_max_chars": config.tool_output_max_chars,
         "has_api_key": bool(config.api_key),
     }
 

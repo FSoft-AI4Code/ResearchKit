@@ -5,7 +5,7 @@ import {
 } from '../context/researchkit-context'
 import { useEditorViewContext } from '@/features/ide-react/context/editor-view-context'
 import { useEditorOpenDocContext } from '@/features/ide-react/context/editor-open-doc-context'
-import { EditorCapture, detectParagraphAroundCursor } from '../hooks/use-editor-capture'
+import { EditorCapture } from '../hooks/use-editor-capture'
 import { ResearchKitMessageList } from './researchkit-message-list'
 import { ResearchKitMessageInput } from './researchkit-message-input'
 import { ResearchKitEditorDiffOverlay } from './researchkit-editor-diff-overlay'
@@ -19,6 +19,9 @@ const ResearchKitPanelContent: FC = () => {
     sendMessage,
     indexProject,
     clearConversation,
+    openPatch,
+    applyPatch,
+    rejectPatch,
   } = useResearchKitContext()
 
   const { view } = useEditorViewContext()
@@ -27,23 +30,30 @@ const ResearchKitPanelContent: FC = () => {
   // Capture editor state at the moment the user clicks Send
   const getCaptureRef = useCallback((): EditorCapture => {
     const filePath = openDocName || null
-    const empty: EditorCapture = { filePath, selectedText: null, selectionFrom: null, selectionTo: null, autoDetected: false }
+    const empty: EditorCapture = {
+      filePath, selectedText: null, selectionFrom: null, selectionTo: null,
+      cursorLine: null, lineFrom: null, lineTo: null, autoDetected: false,
+    }
 
     if (!view) return empty
 
     const { from, to } = view.state.selection.main
     if (from !== to) {
       const selectedText = view.state.doc.sliceString(from, to)
-      return { filePath, selectedText, selectionFrom: from, selectionTo: to, autoDetected: false }
+      const lineFrom = view.state.doc.lineAt(from).number
+      const lineTo = view.state.doc.lineAt(to).number
+      return {
+        filePath, selectedText, selectionFrom: from, selectionTo: to,
+        cursorLine: null, lineFrom, lineTo, autoDetected: false,
+      }
     }
 
-    // No selection — auto-detect paragraph at cursor
-    const para = detectParagraphAroundCursor(view)
-    if (para) {
-      return { filePath, selectedText: para.text, selectionFrom: para.from, selectionTo: para.to, autoDetected: true }
+    // No selection — just record cursor line
+    const cursorLine = view.state.doc.lineAt(from).number
+    return {
+      filePath, selectedText: null, selectionFrom: null, selectionTo: null,
+      cursorLine, lineFrom: null, lineTo: null, autoDetected: false,
     }
-
-    return empty
   }, [view, openDocName])
 
   const handleSend = useCallback(
@@ -85,12 +95,20 @@ const ResearchKitPanelContent: FC = () => {
       )}
       <ResearchKitEditorDiffOverlay />
       <div className="rk-chat-wrapper">
-        <ResearchKitMessageList messages={messages} />
+        <ResearchKitMessageList
+          messages={messages}
+          onOpenPatch={openPatch}
+          onAcceptPatch={applyPatch}
+          onRejectPatch={rejectPatch}
+        />
         <ResearchKitMessageInput
           onSend={handleSend}
           isStreaming={isStreaming}
           selectedText={capture.selectedText || undefined}
-          autoDetected={capture.autoDetected}
+          cursorLine={capture.cursorLine}
+          lineFrom={capture.lineFrom}
+          lineTo={capture.lineTo}
+          filePath={capture.filePath}
         />
       </div>
     </div>

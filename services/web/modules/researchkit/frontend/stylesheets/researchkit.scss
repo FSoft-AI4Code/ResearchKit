@@ -55,6 +55,10 @@
 
 .rk-message-header {
   margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .rk-message-sender {
@@ -64,12 +68,127 @@
   text-transform: uppercase;
 }
 
+.rk-step-chip {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--content-secondary, #666);
+  border: 1px solid var(--border-color-01, #d6dce5);
+  border-radius: 999px;
+  padding: 1px 7px;
+  background: var(--bg-color-01, #fff);
+  text-transform: uppercase;
+}
+
 .rk-message-content {
   font-size: 13px;
   line-height: 1.5;
   color: var(--content-primary, #333);
-  white-space: pre-wrap;
   word-break: break-word;
+}
+
+.rk-rich-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rk-rich-paragraph-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rk-rich-paragraph {
+  margin: 0;
+}
+
+.rk-inline-code {
+  display: inline-block;
+  padding: 0 4px;
+  border-radius: 4px;
+  background: var(--bg-color-03, #e9edf2);
+  border: 1px solid var(--border-color-01, #d8dde4);
+  font-family: Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  font-size: 11px;
+}
+
+.rk-rich-list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.rk-rich-list li {
+  margin-bottom: 4px;
+}
+
+.rk-rich-code {
+  margin: 0;
+  padding: 8px;
+  border-radius: 6px;
+  background: var(--bg-color-03, #e9edf2);
+  border: 1px solid var(--border-color-01, #d8dde4);
+  overflow-x: auto;
+  font-family: Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  font-size: 12px;
+}
+
+// User message context (line/selection metadata)
+.rk-user-context {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.rk-context-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+}
+
+.rk-context-meta-label {
+  font-weight: 600;
+  color: var(--blue-50, #1a73e8);
+}
+
+.rk-context-meta-file {
+  color: var(--content-secondary, #666);
+  font-family: monospace;
+  font-size: 10px;
+
+  &::before {
+    content: '\00b7\00a0';
+    color: var(--content-secondary, #666);
+  }
+}
+
+.rk-user-context-details {
+  font-size: 12px;
+}
+
+.rk-user-context-details summary {
+  cursor: pointer;
+  color: var(--content-secondary, #666);
+  font-size: 11px;
+}
+
+.rk-user-context-details pre {
+  margin-top: 6px;
+  margin-bottom: 0;
+  white-space: pre-wrap;
+  background: var(--bg-color-03, #e9edf2);
+  border: 1px solid var(--border-color-01, #d8dde4);
+  border-radius: 6px;
+  padding: 8px;
+  max-height: 180px;
+  overflow: auto;
+  font-family: Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  font-size: 12px;
+}
+
+.rk-user-request {
+  font-size: 13px;
 }
 
 .rk-message-user .rk-message-content {
@@ -82,6 +201,126 @@
   padding: 8px 10px;
   background: var(--bg-color-02, #f0f0f0);
   border-radius: 8px;
+}
+
+.rk-assistant-placeholder {
+  font-size: 12px;
+  color: var(--content-secondary, #666);
+  font-style: italic;
+}
+
+.rk-message-section {
+  margin-top: 8px;
+  border: 1px solid var(--border-color-01, #d8dde4);
+  border-radius: 8px;
+  background: var(--bg-color-01, #fff);
+}
+
+.rk-message-section summary {
+  cursor: pointer;
+  padding: 7px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--content-secondary, #666);
+  user-select: none;
+}
+
+.rk-message-section[open] summary {
+  border-bottom: 1px solid var(--border-color-01, #d8dde4);
+}
+
+.rk-message-section-patches summary {
+  background: var(--bg-color-02, #f6f8fa);
+}
+
+.rk-action-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+}
+
+.rk-action-item {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--content-secondary, #666);
+}
+
+.rk-action-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.rk-action-headline {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.rk-action-status {
+  flex-shrink: 0;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.rk-action-status-started {
+  color: var(--blue-50, #1a73e8);
+}
+
+.rk-action-status-completed {
+  color: var(--green-50, #138a07);
+}
+
+.rk-action-status-error {
+  color: var(--red-50, #dc3545);
+}
+
+.rk-action-status-warning {
+  color: var(--orange-50, #c26a00);
+}
+
+.rk-action-main {
+  color: var(--content-primary, #333);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.rk-action-sequence,
+.rk-action-patch-count {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--content-secondary, #666);
+  border: 1px solid var(--border-color-01, #d8dde4);
+  border-radius: 999px;
+  padding: 1px 6px;
+  background: var(--bg-color-02, #f6f8fa);
+}
+
+.rk-action-command {
+  width: fit-content;
+  max-width: 100%;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--bg-color-03, #e9edf2);
+  border: 1px solid var(--border-color-01, #d8dde4);
+  color: var(--content-primary, #333);
+  font-family: Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  font-size: 10px;
+  overflow-wrap: anywhere;
+}
+
+.rk-action-detail {
+  word-break: break-word;
+}
+
+.rk-message-patches {
+  padding: 8px 10px 10px;
 }
 
 .rk-cursor-blink {
@@ -145,16 +384,51 @@
 .rk-diff-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
   gap: 8px;
   padding: 6px 10px;
   background: var(--bg-color-02, #f6f8fa);
   border-bottom: 1px solid var(--border-color-01, #ddd);
 }
 
+.rk-diff-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+
 .rk-diff-file {
   font-family: monospace;
   font-size: 11px;
   color: var(--content-secondary, #666);
+}
+
+.rk-diff-file-link {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--blue-50, #1a73e8);
+  font-family: monospace;
+  font-size: 11px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.rk-diff-open-btn {
+  padding: 3px 8px;
+  border: 1px solid var(--border-color-01, #d8dde4);
+  border-radius: 4px;
+  background: var(--bg-color-01, #fff);
+  color: var(--content-primary, #333);
+  font-size: 11px;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--bg-color-02, #f5f5f5);
+  }
 }
 
 .rk-diff-description {
@@ -197,6 +471,23 @@
   word-break: break-word;
   font-family: inherit;
   font-size: inherit;
+}
+
+.rk-diff-toggle {
+  display: block;
+  width: 100%;
+  padding: 4px 10px;
+  font-size: 11px;
+  color: var(--blue-50, #1a73e8);
+  background: var(--bg-color-01, #fff);
+  border: none;
+  border-top: 1px solid var(--border-color-01, #ddd);
+  cursor: pointer;
+  text-align: center;
+
+  &:hover {
+    background: var(--bg-color-02, #f5f5f5);
+  }
 }
 
 .rk-diff-actions {
@@ -266,32 +557,51 @@
   padding: 8px;
 }
 
-.rk-selected-text-preview {
+// Context pill (above textarea)
+.rk-context-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   padding: 4px 8px;
   margin-bottom: 4px;
   font-size: 11px;
   background: var(--blue-10, #e8f0fe);
   border-radius: 4px;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
-.rk-selected-label {
+.rk-context-pill-label {
   font-weight: 600;
-  margin-right: 4px;
   color: var(--blue-50, #1a73e8);
+  flex-shrink: 0;
 }
 
-.rk-selected-content {
+.rk-context-pill-file {
   color: var(--content-secondary, #666);
   font-family: monospace;
+  font-size: 10px;
+  flex-shrink: 0;
+
+  &::before {
+    content: '\00b7\00a0';
+  }
+}
+
+.rk-context-pill-preview {
+  color: var(--content-secondary, #666);
+  font-family: monospace;
+  font-size: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-left: 1px solid var(--border-color-01, #c8d0da);
+  padding-left: 6px;
 }
 
 .rk-input-wrapper {
   display: flex;
   gap: 4px;
-  align-items: flex-end;
+  align-items: stretch;
 }
 
 .rk-input {
@@ -300,10 +610,11 @@
   font-size: 13px;
   border: 1px solid var(--border-color-01, #ddd);
   border-radius: 6px;
-  resize: none;
-  min-height: 32px;
-  max-height: 120px;
+  resize: vertical;
+  min-height: 88px;
+  max-height: 300px;
   font-family: inherit;
+  line-height: 1.45;
 
   &:focus {
     outline: none;
@@ -325,6 +636,7 @@
   color: #fff;
   cursor: pointer;
   white-space: nowrap;
+  align-self: flex-end;
 
   &:hover:not(:disabled) {
     opacity: 0.9;

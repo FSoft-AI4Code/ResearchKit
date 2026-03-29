@@ -9,7 +9,8 @@ Overleaf (port 80)  ──proxy──▶  ResearchKit (port 3020)  ──▶  Mo
    │                                  │
    │ React sidebar UI                 │ FastAPI + SSE streaming
    │ Express proxy routes             │ Main Agent + Memory + LLM Providers
-   └──────────────────────────────────┘
+   │                                  └──────────────▶ ResearchKit Runner (port 3030)
+   └───────────────────────────────────────────────────────────────────────────────┘
 ```
 
 The Overleaf module (`services/web/modules/researchkit/`) provides the frontend UI and proxies requests to this Python service. The proxy also injects project files from Overleaf's internal storage so the agent has access to LaTeX content.
@@ -91,7 +92,7 @@ Note: When running locally, set `RESEARCHKIT_URL=http://host.docker.internal:302
 | Method | Path | Description |
 |--------|------|-------------|
 | GET | `/api/health` | Health check |
-| POST | `/api/chat` | Chat with Main Agent (returns SSE stream) |
+| POST | `/api/chat` | Chat with Main Agent (returns SSE stream: `message`, `action`, `patch`, `done`) |
 | POST | `/api/project/index` | Index project files to build Memory |
 | GET | `/api/memory/{project_id}` | Get paper Memory state |
 | GET | `/api/config/{project_id}` | Get project config |
@@ -138,6 +139,12 @@ The service supports multiple LLM providers via environment variables or per-pro
 OPENAI_API_KEY=sk-...
 OPENAI_BASE_URL=                    # Leave empty for api.openai.com
 RESEARCHKIT_MODEL=gpt-4o            # Default model
+RESEARCHKIT_RUNNER_URL=http://researchkit-runner:3030
+RESEARCHKIT_WORKSPACE_PATH=         # Optional default workspace path
+RESEARCHKIT_ALLOWED_WORKSPACE_ROOTS=/projects:/mnt/research
+RESEARCHKIT_BASH_TIMEOUT_SECONDS=60
+RESEARCHKIT_MAX_TOOL_ITERATIONS=8
+RESEARCHKIT_TOOL_OUTPUT_MAX_CHARS=12000
 
 # Anthropic
 ANTHROPIC_API_KEY=sk-ant-...
@@ -155,7 +162,9 @@ curl -X POST http://localhost:3020/api/config/my-project \
   -d '{
     "provider_type": "anthropic",
     "model": "claude-sonnet-4-20250514",
-    "api_key": "sk-ant-..."
+    "api_key": "sk-ant-...",
+    "workspace_path": "/projects/my-project",
+    "runner_url": "http://researchkit-runner:3030"
   }'
 ```
 
