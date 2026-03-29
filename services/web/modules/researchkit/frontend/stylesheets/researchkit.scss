@@ -134,10 +134,6 @@
 }
 
 // Diff view
-.rk-message-patches {
-  margin: 4px 0 8px;
-}
-
 .rk-diff {
   margin: 6px 0;
   border: 1px solid var(--border-color-01, #ddd);
@@ -338,4 +334,24 @@
     opacity: 0.5;
     cursor: not-allowed;
   }
+}
+
+.rk-editor-block-widget {
+  margin: 6px 0;
+}
+
+.rk-editor-block-widget .rk-diff {
+  margin: 0;
+  background: var(--bg-color-01, #fff);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+}
+
+.ide-redesign-researchkit-panel {
+  border-left: 1px solid var(--border-divider, #2b3441);
+  background: var(--bg-color-01, #101824);
+}
+
+.ide-redesign-researchkit-panel-inner {
+  height: 100%;
+  overflow: hidden;
 }

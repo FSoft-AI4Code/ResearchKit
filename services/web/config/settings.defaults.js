@@ -1007,7 +1007,12 @@ module.exports = {
     sourceEditorToolbarEndButtons: [],
     rootContextProviders: [],
     mainEditorLayoutModals: [],
-    mainEditorLayoutPanels: [],
+    mainEditorLayoutPanels: [
+      Path.resolve(
+        __dirname,
+        '../modules/researchkit/frontend/js/components/researchkit-right-panel.tsx'
+      ),
+    ],
     langFeedbackLinkingWidgets: [],
     labsExperiments: [],
     integrationLinkingWidgets: [],
@@ -1058,12 +1063,7 @@ module.exports = {
     referenceSearchSetting: [],
     errorLogsComponents: [],
     referenceIndices: [],
-    railEntries: [
-      Path.resolve(
-        __dirname,
-        '../modules/researchkit/frontend/js/components/researchkit-rail-entry.tsx'
-      ),
-    ],
+    railEntries: [],
     railPopovers: [],
   },
 

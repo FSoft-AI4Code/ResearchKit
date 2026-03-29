@@ -17,6 +17,15 @@ RUN npm install --include=dev && npx webpack --config webpack.config.prod.js
 # Stage 2: Production image with rebuilt frontend
 FROM sharelatex/sharelatex
 
+# Install broad TeX Live collections to reduce missing-package issues.
+# Retry with the matching frozen TeX Live repository if the default mirror is newer.
+RUN PACKAGES="collection-latexrecommended collection-latexextra collection-fontsrecommended collection-bibtexextra collection-mathscience collection-formatsextra inconsolata" && \
+    tlmgr install ${PACKAGES} || ( \
+      TL_YEAR="$(ls /usr/local/texlive | grep -E '^[0-9]{4}$' | sort -nr | head -n 1)" && \
+      tlmgr option repository "https://ftp.math.utah.edu/pub/tex/historic/systems/texlive/${TL_YEAR}/tlnet-final" && \
+      tlmgr install ${PACKAGES} \
+    )
+
 # Copy ResearchKit module and modified backend files
 COPY services/web/modules/researchkit /overleaf/services/web/modules/researchkit
 COPY services/web/config/settings.defaults.js /overleaf/services/web/config/settings.defaults.js

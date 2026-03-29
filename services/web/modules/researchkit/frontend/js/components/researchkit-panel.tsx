@@ -8,6 +8,7 @@ import { useEditorOpenDocContext } from '@/features/ide-react/context/editor-ope
 import { EditorCapture, detectParagraphAroundCursor } from '../hooks/use-editor-capture'
 import { ResearchKitMessageList } from './researchkit-message-list'
 import { ResearchKitMessageInput } from './researchkit-message-input'
+import { ResearchKitEditorDiffOverlay } from './researchkit-editor-diff-overlay'
 import '../../stylesheets/researchkit.scss'
 
 const ResearchKitPanelContent: FC = () => {
@@ -82,6 +83,7 @@ const ResearchKitPanelContent: FC = () => {
           {error}
         </div>
       )}
+      <ResearchKitEditorDiffOverlay />
       <div className="rk-chat-wrapper">
         <ResearchKitMessageList messages={messages} />
         <ResearchKitMessageInput

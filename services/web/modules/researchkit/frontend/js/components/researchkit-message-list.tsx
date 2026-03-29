@@ -1,9 +1,7 @@
 import { FC, useEffect, useRef } from 'react'
-import { RKMessage, useResearchKitContext } from '../context/researchkit-context'
-import { ResearchKitDiffView } from './researchkit-diff-view'
+import { RKMessage } from '../context/researchkit-context'
 
 const MessageBubble: FC<{ message: RKMessage }> = ({ message }) => {
-  const { applyPatch, rejectPatch } = useResearchKitContext()
   const isUser = message.role === 'user'
 
   return (
@@ -13,20 +11,6 @@ const MessageBubble: FC<{ message: RKMessage }> = ({ message }) => {
           {isUser ? 'You' : 'ResearchKit'}
         </span>
       </div>
-      {message.patches && message.patches.length > 0 && (
-        <div className="rk-message-patches">
-          {message.patches.map((patch, idx) => (
-            <ResearchKitDiffView
-              key={`${message.id}-patch-${idx}`}
-              patch={patch}
-              messageId={message.id}
-              patchIndex={idx}
-              onAccept={applyPatch}
-              onReject={rejectPatch}
-            />
-          ))}
-        </div>
-      )}
       <div className="rk-message-content">
         {message.content || (message.isStreaming ? '...' : '')}
         {message.isStreaming && <span className="rk-cursor-blink">|</span>}
