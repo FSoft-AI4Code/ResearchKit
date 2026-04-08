@@ -1,0 +1,6 @@
+credentials-file: /etc/cloudflared/credentials.json
+
+ingress:
+  - hostname: researchkit.anhnh2002.site
+    service: http://nginx:8080
+  - service: http_status:404

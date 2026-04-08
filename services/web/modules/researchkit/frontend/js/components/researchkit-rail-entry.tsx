@@ -1,10 +1,11 @@
-import ResearchKitPanel from './researchkit-panel'
+import ResearchKitPanel from "./researchkit-panel";
+import ResearchKitRailIcon from "./researchkit-rail-icon";
 
 const researchkitRailEntry = {
-  key: 'researchkit' as const,
-  icon: 'smart_toy',
-  title: 'ResearchKit',
+  key: "researchkit" as const,
+  icon: ResearchKitRailIcon,
+  title: "ResearchKit",
   component: <ResearchKitPanel />,
-}
+};
 
-export default researchkitRailEntry
+export default researchkitRailEntry;

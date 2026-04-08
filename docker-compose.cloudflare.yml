@@ -1,0 +1,28 @@
+services:
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: researchkit-nginx
+    restart: always
+    depends_on:
+      sharelatex:
+        condition: service_started
+    expose:
+      - "8080"
+    environment:
+      PUBLIC_DOMAIN: ${PUBLIC_DOMAIN:-connected.vn}
+    volumes:
+      - ./deploy/nginx/default.conf.template:/etc/nginx/templates/default.conf.template:ro
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: researchkit-cloudflared
+    restart: always
+    depends_on:
+      nginx:
+        condition: service_started
+    command:
+      - tunnel
+      - --no-autoupdate
+      - run
+      - --token
+      - ${CLOUDFLARE_TUNNEL_TOKEN}

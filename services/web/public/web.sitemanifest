@@ -1,5 +1,6 @@
 {
-  "name": "Overleaf",
+  "name": "ResearchKit",
+  "short_name": "ResearchKit",
   "icons": [
       {
           "src": "/android-chrome-192x192.png",

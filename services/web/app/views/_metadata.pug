@@ -38,20 +38,18 @@ else if metadata && metadata.image_src
 	meta(itemprop='image' content=metadata.image_src)
 	meta(name='image' content=metadata.image_src)
 else if settings.overleaf
-	//- the default image for Overleaf
-	meta(itemprop='image' content=buildImgPath('ol-brand/overleaf_og_logo.png'))
-	meta(name='image' content=buildImgPath('ol-brand/overleaf_og_logo.png'))
+	meta(itemprop='image' content=buildImgPath('brand/researchkit-logo-card.png'))
+	meta(name='image' content=buildImgPath('brand/researchkit-logo-card.png'))
 else
-	//- the default image for Overleaf Community Edition/Server Pro
-	meta(itemprop='image' content=buildBaseAssetPath() + 'apple-touch-icon.png')
-	meta(name='image' content=buildBaseAssetPath() + 'apple-touch-icon.png')
+	meta(itemprop='image' content=buildImgPath('brand/researchkit-logo-card.png'))
+	meta(name='image' content=buildImgPath('brand/researchkit-logo-card.png'))
 
 //- Keywords
 if metadata && metadata.keywords
 	meta(name='keywords' content=metadata.keywords)
 
 //- Misc
-meta(itemprop='name' content=settings.appName + ', the Online LaTeX Editor')
+meta(itemprop='name' content=settings.appName + ', the AI research writing environment')
 
 if metadata && metadata.robotsNoindexNofollow
 	meta(name='robots' content='noindex, nofollow')
@@ -72,16 +70,14 @@ if metadata && metadata.twitterImage && metadata.twitterImage.fields
 	meta(name='twitter:image' content=metadata.twitterImage.fields.file.url)
 	meta(name='twitter:image:alt' content=metadata.twitterImage.fields.title)
 else if settings.overleaf
-	//- the default image for Overleaf
 	meta(
 		name='twitter:image'
-		content=buildImgPath('ol-brand/overleaf_og_logo.png')
+		content=buildImgPath('brand/researchkit-logo-card.png')
 	)
 else
-	//- the default image for Overleaf Community Edition/Server Pro
 	meta(
 		name='twitter:image'
-		content=buildBaseAssetPath() + 'apple-touch-icon.png'
+		content=buildImgPath('brand/researchkit-logo-card.png')
 	)
 
 //- Open Graph
@@ -98,16 +94,14 @@ if metadata && metadata.openGraphImage && metadata.openGraphImage.fields
 	//- from the CMS
 	meta(property='og:image' content=metadata.openGraphImage.fields.file.url)
 else if settings.overleaf
-	//- the default image for Overleaf
 	meta(
 		property='og:image'
-		content=buildImgPath('ol-brand/overleaf_og_logo.png')
+		content=buildImgPath('brand/researchkit-logo-card.png')
 	)
 else
-	//- the default image for Overleaf Community Edition/Server Pro
 	meta(
 		property='og:image'
-		content=buildBaseAssetPath() + 'apple-touch-icon.png'
+		content=buildImgPath('brand/researchkit-logo-card.png')
 	)
 
 if metadata && metadata.openGraphType
@@ -138,7 +132,7 @@ link(rel='apple-touch-icon' href=buildBaseAssetPath() + 'apple-touch-icon.png')
 link(
 	rel='mask-icon'
 	href=buildBaseAssetPath() + 'mask-favicon.svg'
-	color='#046530'
+	color='#289db0'
 )
 
 //- Canonical Tag for SEO

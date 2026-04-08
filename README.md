@@ -134,6 +134,78 @@ docker exec sharelatex /bin/bash -c "cd /overleaf/services/web && node modules/s
 3. Open the ResearchKit rail entry in the editor
 4. Index the project or start chatting
 
+## Cloudflare + Nginx Deployment
+
+This repository supports two Cloudflare tunnel modes:
+
+- Remote-managed: the tunnel token is stored in `.env` and ingress/public hostname rules are managed in the Cloudflare dashboard.
+- Local-managed: Docker reads `deploy/cloudflared/config.yml` and `deploy/cloudflared/credentials.json`, and you bootstrap the tunnel once with the Cloudflare CLI.
+
+### Local-managed tunnel
+
+This mode keeps the ingress mapping in the repository and avoids dashboard-managed hostname rules after initial tunnel creation.
+
+1. Set the public domain in `.env`
+
+```bash
+OVERLEAF_SITE_URL=https://{domain}
+OVERLEAF_SECURE_COOKIE=true
+PUBLIC_DOMAIN={domain}
+```
+
+2. Log in to Cloudflare once on the host
+
+```bash
+cloudflared tunnel login
+```
+
+3. Create the tunnel, credentials file, DNS route, and local config
+
+```bash
+./scripts/setup_cloudflare_local_tunnel.sh researchkit
+```
+
+This writes:
+
+- `deploy/cloudflared/config.yml`
+- `deploy/cloudflared/credentials.json`
+- `CLOUDFLARE_TUNNEL_ID=...` into `.env`
+
+4. Start the local-managed tunnel stack
+
+```bash
+docker compose -f docker-compose.yml -d --build -f docker-compose.cloudflare.local.yml up -d --build
+```
+
+`cloudflared` will then publish `{domain}` to `http://nginx:8080` using the local config mounted from `deploy/cloudflared/`.
+
+### Remote-managed tunnel
+
+This repository also includes a production overlay that keeps Overleaf and ResearchKit private on the Docker network, fronts them with `nginx`, and publishes the site through a Cloudflare Tunnel configured in the Cloudflare dashboard.
+
+### 1. Set the public domain in `.env`
+
+```bash
+OVERLEAF_SITE_URL=https://{domain}
+OVERLEAF_SECURE_COOKIE=true
+PUBLIC_DOMAIN={domain}
+CLOUDFLARE_TUNNEL_TOKEN=<token-from-cloudflare>
+```
+
+`OVERLEAF_TRUSTED_PROXY_IPS=loopback,linklocal,uniquelocal` is already the recommended default for the Docker-network reverse proxy setup.
+
+### 2. Start the tunnel-enabled stack
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.cloudflare.yml up -d --build
+```
+
+This starts:
+
+- `sharelatex` and `researchkit` bound to `127.0.0.1` on the host
+- `nginx` on the internal Docker network
+- `cloudflared` forwarding `{domain}` to `nginx`
+
 ## Development
 
 ### Full stack with Docker

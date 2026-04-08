@@ -18,7 +18,7 @@
 }
 
 .overleaf-ds-logo {
-  background-image: url('../../../frontend/js/shared/svgs/overleaf-a-ds-solution-mallard.svg');
+  background-image: url("../../../public/img/brand/researchkit-logo-dark.svg");
 }
 
 .ciam-layout {
@@ -92,7 +92,7 @@
 
   @include media-breakpoint-up(sm) {
     height: 64px;
-    width: 142px;
+    width: 172px;
     margin: 9px 0; // Vertical margin isn't an exacting spacing value in the design
   }
 }
@@ -189,7 +189,7 @@
 
   &::before,
   &::after {
-    content: '';
+    content: "";
     display: block;
     flex-grow: 1;
     height: 1px;
@@ -206,7 +206,7 @@
   gap: var(--ds-spacing-200);
 
   li {
-    background-image: url('../../../public/img/ciam-check-green.svg');
+    background-image: url("../../../public/img/ciam-check-green.svg");
     background-repeat: no-repeat;
     background-position: left center;
     background-size: 16px 16px;

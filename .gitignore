@@ -9,3 +9,5 @@ __pycache__/
 
 *.ipynb
 tmp/
+deploy/cloudflared/credentials.json
+deploy/cloudflared/*.orig

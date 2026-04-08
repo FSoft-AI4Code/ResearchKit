@@ -13,7 +13,7 @@ services:
       redis:
         condition: service_started
     ports:
-      - 80:80
+      - "127.0.0.1:${OVERLEAF_PORT:-80}:80"
     stop_grace_period: 60s
     volumes:
       - ~/sharelatex_data:/var/lib/overleaf
@@ -24,6 +24,8 @@ services:
       # - /var/run/docker.sock:/var/run/docker.sock
     environment:
       OVERLEAF_APP_NAME: Overleaf Community Edition
+      OVERLEAF_SITE_URL: ${OVERLEAF_SITE_URL:-http://localhost}
+      OVERLEAF_TRUSTED_PROXY_IPS: ${OVERLEAF_TRUSTED_PROXY_IPS:-loopback,linklocal,uniquelocal}
       RESEARCHKIT_URL: http://researchkit:3020
 
       OVERLEAF_MONGO_URL: mongodb://mongo/sharelatex
@@ -111,7 +113,7 @@ services:
       researchkit-runner:
         condition: service_started
     ports:
-      - "${RESEARCHKIT_PORT:-3020}:3020"
+      - "127.0.0.1:${RESEARCHKIT_PORT:-3020}:3020"
     environment:
       MONGODB_URL: mongodb://mongo/sharelatexad
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}

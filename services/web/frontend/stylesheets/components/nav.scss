@@ -1,4 +1,4 @@
-@import 'bootstrap/scss/functions';
+@import "bootstrap/scss/functions";
 
 :root {
   // Basics
@@ -7,10 +7,10 @@
   --navbar-border: transparent;
   --navbar-padding-h: var(--spacing-05);
   --navbar-padding: 0 var(--navbar-padding-h);
-  --navbar-brand-width: 130px;
+  --navbar-brand-width: 172px;
   --navbar-brand-image-url: var(
     --navbar-brand-image-default-url,
-    url('../../../public/img/ol-brand/overleaf-white.svg')
+    url("../../../public/img/brand/researchkit-logo-light.svg")
   );
 
   // Title, when used instead of a logo

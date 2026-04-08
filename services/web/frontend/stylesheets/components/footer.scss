@@ -1,4 +1,4 @@
-@use 'sass:map';
+@use "sass:map";
 
 // Max width of the sidebar
 $footer-width-delta: 320px;
@@ -19,21 +19,21 @@ $footer-width-delta: 320px;
   --footer-background: var(--bg-dark-primary);
   --footer-content: var(--content-secondary-dark);
   --footer-link: var(--content-secondary-dark);
-  --footer-logo-url: url('../../../frontend/js/shared/svgs/overleaf-green.svg');
+  --footer-logo-url: url("../../../public/img/brand/researchkit-logo-light.svg");
 }
 
 @mixin footer-light {
   --footer-background: var(--bg-light-secondary);
   --footer-content: var(--content-primary);
   --footer-link: var(--content-primary);
-  --footer-logo-url: url('../../../frontend/js/shared/svgs/overleaf-green.svg');
+  --footer-logo-url: url("../../../public/img/brand/researchkit-logo-dark.svg");
 }
 
 @mixin footer-dark {
   --footer-background: var(--bg-dark-primary);
   --footer-content: var(--content-primary-dark);
   --footer-link: var(--content-placeholder-dark);
-  --footer-logo-url: url('../../../frontend/js/shared/svgs/overleaf-white.svg');
+  --footer-logo-url: url("../../../public/img/brand/researchkit-logo-light.svg");
 }
 
 @mixin socials-light {
@@ -67,7 +67,7 @@ $footer-width-delta: 320px;
     @include socials-light;
   }
 
-  @include theme('default') {
+  @include theme("default") {
     .ide-redesign-main,
     .project-ds-nav-page {
       .cookie-banner {
@@ -240,9 +240,9 @@ footer.site-footer {
 
   .footer-brand {
     display: block;
-    height: 37px;
-    width: 130px;
-    background-image: url('../../../public/img/ol-brand/overleaf-white.svg');
+    height: 44px;
+    width: 172px;
+    background-image: var(--footer-logo-url);
     background-size: contain;
     background-repeat: no-repeat;
     background-position: left center;
@@ -375,7 +375,7 @@ footer.site-footer {
 
   @include footer-container-up(md) {
     .fat-footer-container {
-      width: (map.get($grid-breakpoints, 'md') - ($spacing-04 * 2));
+      width: (map.get($grid-breakpoints, "md") - ($spacing-04 * 2));
     }
 
     #footer-brand {
@@ -419,7 +419,7 @@ footer.site-footer {
 
   @include footer-container-up(lg) {
     .fat-footer-container {
-      width: (map.get($grid-breakpoints, 'lg') - $spacing-07);
+      width: (map.get($grid-breakpoints, "lg") - $spacing-07);
     }
 
     .fat-footer-sections {
@@ -429,7 +429,7 @@ footer.site-footer {
 
   @include footer-container-up(xl) {
     .fat-footer-container {
-      width: (map.get($grid-breakpoints, 'xl') - $spacing-09);
+      width: (map.get($grid-breakpoints, "xl") - $spacing-09);
     }
 
     .fat-footer-sections {

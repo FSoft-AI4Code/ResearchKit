@@ -1,33 +1,34 @@
-import { useProjectListContext } from '../context/project-list-context'
-import { useTranslation } from 'react-i18next'
-import CurrentPlanWidget from './current-plan-widget/current-plan-widget'
-import NewProjectButton from './new-project-button'
-import ProjectListTable from './table/project-list-table'
-import UserNotifications from './notifications/user-notifications'
-import SearchForm from './search-form'
-import ProjectsDropdown from './dropdown/projects-dropdown'
-import SortByDropdown from './dropdown/sort-by-dropdown'
-import ProjectTools from './table/project-tools/project-tools'
-import ProjectListTitle from './title/project-list-title'
-import LoadMore from './load-more'
-import OLCol from '@/shared/components/ol/ol-col'
-import OLRow from '@/shared/components/ol/ol-row'
-import { TableContainer } from '@/shared/components/table'
-import DashApiError from '@/features/project-list/components/dash-api-error'
-import getMeta from '@/utils/meta'
-import DefaultNavbar from '@/shared/components/navbar/default-navbar'
-import Footer from '@/shared/components/footer/footer'
-import SidebarDsNav from '@/features/project-list/components/sidebar/sidebar-ds-nav'
-import SystemMessages from '@/shared/components/system-messages'
-import overleafLogo from '@/shared/svgs/overleaf-a-ds-solution-mallard.svg'
-import overleafLogoDark from '@/shared/svgs/overleaf-a-ds-solution-mallard-dark.svg'
-import CookieBanner from '@/shared/components/cookie-banner'
-import { useActiveOverallTheme } from '@/shared/hooks/use-active-overall-theme'
+import { useProjectListContext } from "../context/project-list-context";
+import { useTranslation } from "react-i18next";
+import CurrentPlanWidget from "./current-plan-widget/current-plan-widget";
+import NewProjectButton from "./new-project-button";
+import ProjectListTable from "./table/project-list-table";
+import UserNotifications from "./notifications/user-notifications";
+import SearchForm from "./search-form";
+import ProjectsDropdown from "./dropdown/projects-dropdown";
+import SortByDropdown from "./dropdown/sort-by-dropdown";
+import ProjectTools from "./table/project-tools/project-tools";
+import ProjectListTitle from "./title/project-list-title";
+import LoadMore from "./load-more";
+import OLCol from "@/shared/components/ol/ol-col";
+import OLRow from "@/shared/components/ol/ol-row";
+import { TableContainer } from "@/shared/components/table";
+import DashApiError from "@/features/project-list/components/dash-api-error";
+import getMeta from "@/utils/meta";
+import DefaultNavbar from "@/shared/components/navbar/default-navbar";
+import Footer from "@/shared/components/footer/footer";
+import SidebarDsNav from "@/features/project-list/components/sidebar/sidebar-ds-nav";
+import SystemMessages from "@/shared/components/system-messages";
+import CookieBanner from "@/shared/components/cookie-banner";
+import { useActiveOverallTheme } from "@/shared/hooks/use-active-overall-theme";
+
+const researchkitLogoLight = "/img/brand/researchkit-logo-light.svg";
+const researchkitLogoDark = "/img/brand/researchkit-logo-dark.svg";
 
 export function ProjectListDsNav() {
-  const navbarProps = getMeta('ol-navbar')
-  const footerProps = getMeta('ol-footer')
-  const { t } = useTranslation()
+  const navbarProps = getMeta("ol-navbar");
+  const footerProps = getMeta("ol-footer");
+  const { t } = useTranslation();
   const {
     error,
     searchText,
@@ -36,10 +37,10 @@ export function ProjectListDsNav() {
     filter,
     tags,
     selectedTagId,
-  } = useProjectListContext()
-  const activeOverallTheme = useActiveOverallTheme('themed-project-dashboard')
+  } = useProjectListContext();
+  const activeOverallTheme = useActiveOverallTheme("themed-project-dashboard");
 
-  const selectedTag = tags.find(tag => tag._id === selectedTagId)
+  const selectedTag = tags.find((tag) => tag._id === selectedTagId);
 
   const tableTopArea = (
     <div className="pt-2 pb-3 d-md-none d-flex gap-2">
@@ -55,7 +56,7 @@ export function ProjectListDsNav() {
         className="overflow-hidden flex-grow-1"
       />
     </div>
-  )
+  );
 
   return (
     <div className="project-ds-nav-page website-redesign">
@@ -63,7 +64,14 @@ export function ProjectListDsNav() {
       <DefaultNavbar
         {...navbarProps}
         overleafLogo={
-          activeOverallTheme === 'dark' ? overleafLogoDark : overleafLogo
+          activeOverallTheme === "dark"
+            ? researchkitLogoLight
+            : researchkitLogoDark
+        }
+        customLogo={
+          activeOverallTheme === "dark"
+            ? researchkitLogoLight
+            : researchkitLogoDark
         }
         showCloseIcon
       />
@@ -72,7 +80,7 @@ export function ProjectListDsNav() {
         <div className="project-ds-nav-content-and-messages">
           <div className="project-ds-nav-content">
             <div className="project-ds-nav-main">
-              {error ? <DashApiError /> : ''}
+              {error ? <DashApiError /> : ""}
               <UserNotifications />
               <main aria-labelledby="main-content">
                 <div className="project-list-header-row">
@@ -113,7 +121,7 @@ export function ProjectListDsNav() {
                     <div
                       role="toolbar"
                       className="projects-toolbar"
-                      aria-label={t('projects')}
+                      aria-label={t("projects")}
                     >
                       <ProjectsDropdown />
                       <SortByDropdown />
@@ -137,5 +145,5 @@ export function ProjectListDsNav() {
         </div>
       </div>
     </div>
-  )
+  );
 }
